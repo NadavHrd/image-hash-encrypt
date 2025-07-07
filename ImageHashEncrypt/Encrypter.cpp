@@ -18,3 +18,19 @@ ImageData Encrypter::readImage(const std::string& imagePath)
 
 	return image; // In case the image path is invalid, image.pixels will be nullptr
 }
+
+/*
+This function gets the info about an RGB value inside an image, and returns an std::string of the formetted pre-hash string presenting an RGB value.
+Input: int rgbValue - value of the RGB, std::string key - the key of the image, int x - where the RGB value sits (X-axis - width), int y - where the RGB value sits (Y-axis - height).
+Output: std::string - the final formatted pre-hash string presenting the given RGB value.
+Runtime complexity: O(1).
+*/
+std::string Encrypter::formatHashInput(const int rgbValue, const std::string& key, const int x, const int y)
+{
+	char hashInputBuffer[FORMAT_HASH_BUFFER_SIZE];
+
+	// Formatting the result according to the const format - RGB_VALUE_HASH_FORMAT
+	snprintf(hashInputBuffer, sizeof(hashInputBuffer), Encrypter::RGB_VALUE_HASH_FORMAT, rgbValue, key.c_str(), y, x);
+
+	return (std::string)hashInputBuffer;
+}
