@@ -34,3 +34,70 @@ std::string Encrypter::formatHashInput(const int rgbValue, const std::string& ke
 
 	return (std::string)hashInputBuffer;
 }
+
+/*
+This function checks whether the given key is valid or not.
+Input: const std::string& key - the key the function checks.
+Output: int - a code presenting the key's validation result.
+Runtime complexity: O(n).
+*/
+int Encrypter::isKeyValid(const std::string& key)
+{
+	if (key.length() > KEY_MAX_LENGTH) // Exceeds maximum allowed length
+		return TOO_LONG;
+
+	if (key.length() < KEY_MIN_LENGTH) // Below minimum required length
+		return TOO_SHORT;
+
+	for (auto charIt = key.begin(); charIt != key.end(); charIt++) // Going over every char inside the key
+	{
+		if (isspace(static_cast<unsigned char>(*charIt))) // ' ', '\n', '\t' - all white spaces are invalid
+			return INVALID_CHARS;
+	}
+
+	return VALID;
+}
+
+/*
+This function returns the final string presenting the given image (encrypted).
+Input: ImageData image - the image the function will encrypt and return the string of, const std::string& key - the encryption key the function uses.
+Output: std::string - the given image, as an encrypted string - ready to go into a .txt file. Empty in case of an error.
+Runtime complexity: O(n).
+*/
+std::string Encrypter::getEncryptedImageStr(ImageData image, const std::string& key)
+{
+	int heightIndex = 0, widthIndex = 0, currRgbIndex = 0, rgbLoop = 0;
+	std::string encryptedImage = "";
+
+	if (!image.pixels) // If the given image is empty
+		return "";
+
+	if (Encrypter::isKeyValid(key) != VALID) // If the given key is invalid
+		return "";
+
+	for (heightIndex = 0; heightIndex < image.height; heightIndex++) // Going over each row of the image
+	{
+		for (widthIndex = 0; widthIndex < image.width; widthIndex++) // Going over every pixel of each row
+		{
+			// currRgbIndex -> R
+			// (currRgbIndex + 1) -> G
+			// (currRgbIndex + 2) -> B
+			currRgbIndex = (((heightIndex * image.width) + widthIndex) * RGB_VALUES_AMOUNT_IN_PIXEL); // Calculating the current rgb value index
+			
+			for (rgbLoop = 0; rgbLoop < RGB_VALUES_AMOUNT_IN_PIXEL; rgbLoop++) // Going over every rgb value in the current pixel
+			{
+				try
+				{
+					// Adding the current rgb value hash to the final image string
+					encryptedImage += picosha2::hash256_hex_string(Encrypter::formatHashInput(image.pixels[currRgbIndex + rgbLoop], key, widthIndex, heightIndex));
+				}
+				catch (...) // Access violation - image.pixels doesn't match image.width & image.height -> invalid image was given
+				{
+					return "";
+				}
+			}
+		}
+	}
+
+	return encryptedImage;
+}

@@ -7,6 +7,19 @@ constexpr int RGB_CHANNELS_VALUE = 3;
 
 constexpr int FORMAT_HASH_BUFFER_SIZE = 128;
 
+constexpr int RGB_VALUES_AMOUNT_IN_PIXEL = 3;
+
+constexpr int KEY_MIN_LENGTH = 4;
+constexpr int KEY_MAX_LENGTH = 32;
+
+enum KeyValidationResult
+{
+	VALID,
+	TOO_SHORT,
+	TOO_LONG,
+	INVALID_CHARS
+};
+
 typedef struct ImageData
 {
 	int width;
@@ -43,4 +56,20 @@ private:
 	Runtime complexity: O(1).
 	*/
 	static std::string formatHashInput(const int rgbValue, const std::string& key, const int x, const int y);
+
+	/*
+	This function checks whether the given key is valid or not.
+	Input: const std::string& key - the key the function checks.
+	Output: int - a code presenting the key's validation result.
+	Runtime complexity: O(n).
+	*/
+	static int isKeyValid(const std::string& key);
+
+	/*
+	This function returns the final string presenting the given image (encrypted).
+	Input: ImageData image - the image the function will encrypt and return the string of, const std::string& key - the encryption key the function uses.
+	Output: std::string - the given image, as an encrypted string - ready to go into a .txt file. Empty in case of an error.
+	Runtime complexity: O(n).
+	*/
+	static std::string getEncryptedImageStr(ImageData image, const std::string& key);
 };
