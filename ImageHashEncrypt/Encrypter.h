@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <fstream>
 #include "picosha2.h"
 
 constexpr int RGB_CHANNELS_VALUE = 3;
@@ -12,12 +13,25 @@ constexpr int RGB_VALUES_AMOUNT_IN_PIXEL = 3;
 constexpr int KEY_MIN_LENGTH = 4;
 constexpr int KEY_MAX_LENGTH = 32;
 
+constexpr const char* TEXT_FILE_EXTENSION = ".txt";
+
 enum KeyValidationResult
 {
 	VALID,
 	TOO_SHORT,
 	TOO_LONG,
 	INVALID_CHARS
+};
+
+enum ImageEncryptionResult
+{
+	SUCCESS,
+	IMAGE_PATH_INVALID,
+	DST_IMAGE_PATH_ALREADY_EXISTS,
+	DST_IMAGE_PATH_NOT_TEXT_FILE,
+	ERROR_CREATING_ENCRYPTED_IMAGE,
+	ERROR_HASHING_IMAGE_VALUES,
+	KEY_INVALID
 };
 
 typedef struct ImageData
@@ -36,9 +50,13 @@ public:
 	//                                     Example:   "17-pa$$word-{10,82}"      "[RGB VALUE]-[KEY]-{[HEIGHT],[WIDTH]}"
 	static constexpr const char* RGB_VALUE_HASH_FORMAT = "%d-%s-{%d,%d}"; // The pre-hash string presenting every RGB value
 
-	Encrypter() {}; // C'tor
-
-	~Encrypter() {}; // D'tor
+	/*
+	This function gets an image path, a destination encrypted image path (.txt) and a key, and encrypts the given image.
+	Input: const std::string& imagePath - the image the function will encrypt, const std::string& encryptedImagePath - the destination file to keep the encrypted image (.txt that doesn't exist), const std::string& key - the encryption key.
+	Output: int - the result of the encryption.
+	Runtime complexity: O(n).
+	*/
+	static int EncryptImage(const std::string& imagePath, const std::string& encryptedImagePath, const std::string& key);
 
 private:
 	/*

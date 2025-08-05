@@ -1,3 +1,5 @@
+#include <filesystem>
+
 #include "Encrypter.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -90,6 +92,7 @@ std::string Encrypter::getEncryptedImageStr(ImageData image, const std::string& 
 				{
 					// Adding the current rgb value hash to the final image string
 					encryptedImage += picosha2::hash256_hex_string(Encrypter::formatHashInput(image.pixels[currRgbIndex + rgbLoop], key, widthIndex, heightIndex));
+					encryptedImage += " "; // hash256_hex_string will NEVER produce ' ' -> we'll use that as a seperator
 				}
 				catch (...) // Access violation - image.pixels doesn't match image.width & image.height -> invalid image was given
 				{
@@ -97,7 +100,68 @@ std::string Encrypter::getEncryptedImageStr(ImageData image, const std::string& 
 				}
 			}
 		}
+
+		encryptedImage += "\n"; // hash256_hex_string will NEVER produce '\n' -> we'll use that as a rows seperator
+	}
+	
+	return encryptedImage;
+}
+
+/*
+This function gets an image path, a destination encrypted image path (.txt) and a key, and encrypts the given image.
+Input: const std::string& imagePath - the image the function will encrypt, const std::string& encryptedImagePath - the destination file to keep the encrypted image (.txt that doesn't exist), const std::string& key - the encryption key.
+Output: int - the result of the encryption.
+Runtime complexity: O(n).
+*/
+int Encrypter::EncryptImage(const std::string& imagePath, const std::string& encryptedImagePath, const std::string& key)
+{
+	std::ofstream encryptedImage;
+	std::string encryptedImageStr = "";
+	ImageData image = Encrypter::readImage(imagePath); // Reading the given image path
+
+	if (!image.pixels) // Image pixels is null -> given image path is invalid
+		return IMAGE_PATH_INVALID;
+
+	if (Encrypter::isKeyValid(key) != VALID) // Invalid key -> no encryption
+	{
+		delete(image.pixels);
+		return KEY_INVALID;
 	}
 
-	return encryptedImage;
+	if (std::filesystem::exists(encryptedImagePath)) // If the destination file already exist, cancel encryption, no intention to override files
+	{
+		delete(image.pixels);
+		return DST_IMAGE_PATH_ALREADY_EXISTS;
+	}
+
+	// If the given destination file path doesn't end with ".txt"
+	if ((encryptedImagePath.size() < std::string(TEXT_FILE_EXTENSION).length()) || (encryptedImagePath.substr(encryptedImagePath.size() - std::string(TEXT_FILE_EXTENSION).length()) != TEXT_FILE_EXTENSION))
+	{
+		delete(image.pixels);
+		return DST_IMAGE_PATH_NOT_TEXT_FILE;
+	}
+	
+	encryptedImage.open(encryptedImagePath);
+
+	// Unknown error while creating the destination file
+	if (!encryptedImage.is_open())
+	{
+		delete(image.pixels);
+		return ERROR_CREATING_ENCRYPTED_IMAGE;
+	}
+	
+	encryptedImageStr = Encrypter::getEncryptedImageStr(image, key); // Getting the encrypted image string - the hash values
+
+	if (encryptedImageStr == "") // Empty string -> the image data is corrupted
+	{
+		encryptedImage.close();
+		delete(image.pixels);
+		return ERROR_HASHING_IMAGE_VALUES;
+	}
+
+	encryptedImage << encryptedImageStr; // Write the encrypted image hashes into the destination file
+
+	encryptedImage.close();
+	delete(image.pixels);
+	return SUCCESS;
 }
