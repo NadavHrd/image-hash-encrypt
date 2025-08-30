@@ -92,7 +92,7 @@ std::string Encrypter::getEncryptedImageStr(ImageData image, const std::string& 
 				{
 					// Adding the current rgb value hash to the final image string
 					encryptedImage += picosha2::hash256_hex_string(Encrypter::formatHashInput(image.pixels[currRgbIndex + rgbLoop], key, widthIndex, heightIndex));
-					encryptedImage += " "; // hash256_hex_string will NEVER produce ' ' -> we'll use that as a seperator
+					encryptedImage += RGB_VALUES_SEPARATOR; // hash256_hex_string will NEVER produce ' ' -> we'll use that as a separator
 				}
 				catch (...) // Access violation - image.pixels doesn't match image.width & image.height -> invalid image was given
 				{
@@ -101,7 +101,7 @@ std::string Encrypter::getEncryptedImageStr(ImageData image, const std::string& 
 			}
 		}
 
-		encryptedImage += "\n"; // hash256_hex_string will NEVER produce '\n' -> we'll use that as a rows seperator
+		encryptedImage += RGB_VALUES_LINES_SEPARATOR; // hash256_hex_string will NEVER produce '\n' -> we'll use that as a rows separator
 	}
 	
 	return encryptedImage;
@@ -135,7 +135,7 @@ int Encrypter::EncryptImage(const std::string& imagePath, const std::string& enc
 	}
 
 	// If the given destination file path doesn't end with ".txt"
-	if ((encryptedImagePath.size() < std::string(TEXT_FILE_EXTENSION).length()) || (encryptedImagePath.substr(encryptedImagePath.size() - std::string(TEXT_FILE_EXTENSION).length()) != TEXT_FILE_EXTENSION))
+	if (!Encrypter::hasExtension(encryptedImagePath, TEXT_FILE_EXTENSION))
 	{
 		delete(image.pixels);
 		return DST_IMAGE_PATH_NOT_TEXT_FILE;
@@ -164,4 +164,18 @@ int Encrypter::EncryptImage(const std::string& imagePath, const std::string& enc
 	encryptedImage.close();
 	delete(image.pixels);
 	return SUCCESS;
+}
+
+/*
+This function checks whether a file path ends with a specific exnetsion.
+Input: const std::string& filePath - the file path the function checks, const std::string& extension - the extension the function checks on the given path.
+Output: bool - whether the given file path ends with the given extension.
+Runtime complexity: O(n).
+*/
+bool Encrypter::hasExtension(const std::string& filePath, const std::string& extension)
+{
+	if (filePath.length() <= extension.length()) // If the file path is shorter then the extension - impossible to include the extension (<= because file name cannot be with 0 length).
+		return false;
+
+	return (filePath.substr(filePath.length() - extension.length()) == extension); // Checking the end of the file path
 }

@@ -15,6 +15,9 @@ constexpr int KEY_MAX_LENGTH = 32;
 
 constexpr const char* TEXT_FILE_EXTENSION = ".txt";
 
+constexpr const char* RGB_VALUES_SEPARATOR = " ";
+constexpr const char* RGB_VALUES_LINES_SEPARATOR = "\n";
+
 enum KeyValidationResult
 {
 	VALID,
@@ -57,6 +60,14 @@ public:
 	Runtime complexity: O(n).
 	*/
 	static int EncryptImage(const std::string& imagePath, const std::string& encryptedImagePath, const std::string& key);
+
+	/*
+	This function checks whether a file path ends with a specific exnetsion.
+	Input: const std::string& filePath - the file path the function checks, const std::string& extension - the extension the function checks on the given path.
+	Output: bool - whether the given file path ends with the given extension.
+	Runtime complexity: O(n).
+	*/
+	static bool hasExtension(const std::string& filePath, const std::string& extension);
 
 private:
 	/*
