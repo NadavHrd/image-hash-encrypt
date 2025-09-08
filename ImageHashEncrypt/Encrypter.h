@@ -69,6 +69,14 @@ public:
 	*/
 	static bool hasExtension(const std::string& filePath, const std::string& extension);
 
+	/*
+	This function gets the info about an RGB value inside an image, and returns an std::string of the formetted pre-hash string presenting an RGB value.
+	Input: int rgbValue - value of the RGB, std::string key - the key of the image, int x - where the RGB value sits (X-axis - width), int y - where the RGB value sits (Y-axis - height).
+	Output: std::string - the final formatted pre-hash string presenting the given RGB value.
+	Runtime complexity: O(1).
+	*/
+	static std::string formatHashInput(const int rgbValue, const std::string& key, const int x, const int y);
+
 private:
 	/*
 	This function gets an image path and returns a struct which includes the image data.
@@ -77,14 +85,6 @@ private:
 	Runtime complexity: O(n).
 	*/
 	static ImageData readImage(const std::string& imagePath);
-
-	/*
-	This function gets the info about an RGB value inside an image, and returns an std::string of the formetted pre-hash string presenting an RGB value.
-	Input: int rgbValue - value of the RGB, std::string key - the key of the image, int x - where the RGB value sits (X-axis - width), int y - where the RGB value sits (Y-axis - height).
-	Output: std::string - the final formatted pre-hash string presenting the given RGB value.
-	Runtime complexity: O(1).
-	*/
-	static std::string formatHashInput(const int rgbValue, const std::string& key, const int x, const int y);
 
 	/*
 	This function checks whether the given key is valid or not.

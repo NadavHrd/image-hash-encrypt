@@ -128,10 +128,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Decrypter.cpp" />
     <ClCompile Include="Encrypter.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Decrypter.h" />
     <ClInclude Include="Encrypter.h" />
     <ClInclude Include="picosha2.h" />
     <ClInclude Include="stb_image.h" />
