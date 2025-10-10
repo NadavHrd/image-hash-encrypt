@@ -14,6 +14,7 @@ constexpr int KEY_MIN_LENGTH = 4;
 constexpr int KEY_MAX_LENGTH = 32;
 
 constexpr const char* TEXT_FILE_EXTENSION = ".txt";
+constexpr const char* PNG_FILE_EXTENSION = ".png";
 
 constexpr const char* RGB_VALUES_SEPARATOR = " ";
 constexpr const char* RGB_VALUES_LINES_SEPARATOR = "\n";

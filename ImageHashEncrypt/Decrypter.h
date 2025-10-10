@@ -1,6 +1,9 @@
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
+#include <filesystem>
 #include "picosha2.h"
 #include "Encrypter.h"
 
@@ -14,12 +17,34 @@ enum EncryptedImageReadingResult
 	SUCCESS_IMAGE_READ,
 	GIVEN_IMAGE_NOT_TXT,
 	INVALID_IMAGE_PATH,
+	READING_IMAGE_INVALID_KEY_GIVEN,
+	READING_IMAGE_WRONG_IMAGE_DIMENSIONS
+};
+
+enum DecryptionResult
+{
+	DECRYPTION_SUCCESS,
+	SRC_IMAGE_NOT_TXT,
+	INVALID_SRC_IMAGE_PATH,
 	INVALID_KEY_GIVEN,
-	WRONG_IMAGE_DIMENSIONS
+	WRONG_IMAGE_DIMENSIONS,
+	INVALID_DEST_IMAGE_PATH,
+	DEST_IMAGE_NOT_PNG,
+	DEST_IMAGE_ALREADY_EXISTS,
+	ERROR_CREATING_IMAGE
 };
 
 class Decrypter
 {
+public:
+	/*
+	This function decrypts an encrypted image and saves it.
+	Input: const std::string& encryptedImagePath - the path of the encrypted image, const std::string& key - the encryption key, const std::string& destImagePath - the path where the image will be saved at.
+	Output: int - the result code (DecryptionResult).
+	Runtime complexity: O(n).
+	*/
+	static int decryptImage(const std::string& encryptedImagePath, const std::string& key, const std::string& destImagePath);
+
 private:
 	/*
 	This function decrypts an image. It gets the path of an encrypted image, and a reference to an ImageData struct, decrypts the given image, and stores the data in the given struct.

@@ -1,5 +1,8 @@
 #include "Decrypter.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 /*
 This function decrypts an image. It gets the path of an encrypted image, and a reference to an ImageData struct, decrypts the given image, and stores the data in the given struct.
 Input: const std::string& encryptedImagePath - the encrypted image the function will decrypt, ImageData& destImage - where the image data will be stored, const std::string& key - the key the function will try decrypting with.
@@ -75,7 +78,7 @@ int Decrypter::readEncryptedImage(const std::string& encryptedImagePath, ImageDa
 			}
 
 			if (currRgbVal == WRONG_KEY_RETURN_VALUE) // If we couldn't find a matching hash - no rgb value found - wrong key
-				return INVALID_KEY_GIVEN;
+				return READING_IMAGE_INVALID_KEY_GIVEN;
 
 			imageRgbValues.push_back(currRgbVal); // Save the rgb value in the image pixels vector
 
@@ -85,7 +88,7 @@ int Decrypter::readEncryptedImage(const std::string& encryptedImagePath, ImageDa
 			if (!firstLine) // If it's not the first line
 			{
 				if ((hashesPerLine / RGB_VALUES_AMOUNT_IN_PIXEL) > imageWidth) // If we just decrypted an 'extra' rgb value - image width is not synced in all rows
-					return WRONG_IMAGE_DIMENSIONS;
+					return READING_IMAGE_WRONG_IMAGE_DIMENSIONS;
 			}
 		}
 
@@ -99,7 +102,7 @@ int Decrypter::readEncryptedImage(const std::string& encryptedImagePath, ImageDa
 		else // If its not the first line
 		{
 			if ((hashesPerLine / RGB_VALUES_AMOUNT_IN_PIXEL) < imageWidth) // If we have missing rgb values for the current row
-				return WRONG_IMAGE_DIMENSIONS;
+				return READING_IMAGE_WRONG_IMAGE_DIMENSIONS;
 		}
 
 		imageHeight++;
@@ -154,4 +157,47 @@ int Decrypter::decryptRgbValue(const std::string& rgbValueHash, const std::strin
 	}
 
 	return WRONG_KEY_RETURN_VALUE; // By here we covered all possible rgb values, but found none matching
+}
+
+/*
+This function decrypts an encrypted image and saves it.
+Input: const std::string& encryptedImagePath - the path of the encrypted image, const std::string& key - the encryption key, const std::string& destImagePath - the path where the image will be saved at.
+Output: int - the result code (DecryptionResult).
+Runtime complexity: O(n).
+*/
+int Decrypter::decryptImage(const std::string& encryptedImagePath, const std::string& key, const std::string& destImagePath)
+{
+	ImageData image;
+	int readEncryptedCode = 0;
+
+	if (!Encrypter::hasExtension(destImagePath, PNG_FILE_EXTENSION)) // If the dest image is not a .png file
+		return DEST_IMAGE_NOT_PNG; // The image cannot be saved
+
+	if (std::filesystem::exists(destImagePath)) // If the dest image path already exists
+		return DEST_IMAGE_ALREADY_EXISTS; // We do not want to override the existing image
+
+	readEncryptedCode = Decrypter::readEncryptedImage(encryptedImagePath, image, key); // Decrypting the image
+
+	switch (readEncryptedCode) // Going over the errors (if some occurred)
+	{
+	// Returning the error codes
+		case GIVEN_IMAGE_NOT_TXT:
+			return SRC_IMAGE_NOT_TXT;
+		case INVALID_IMAGE_PATH:
+			return INVALID_SRC_IMAGE_PATH;
+		case READING_IMAGE_INVALID_KEY_GIVEN:
+			return INVALID_KEY_GIVEN;
+		case READING_IMAGE_WRONG_IMAGE_DIMENSIONS:
+			return WRONG_IMAGE_DIMENSIONS;
+	}
+
+	// Attempting to save the decrypted image as a .png file
+	if (stbi_write_png(destImagePath.c_str(), image.width, image.height, RGB_CHANNELS_VALUE, image.pixels, image.width * RGB_VALUES_AMOUNT_IN_PIXEL))
+	{
+		return DECRYPTION_SUCCESS;
+	}
+	else
+	{
+		return ERROR_CREATING_IMAGE;
+	}
 }
