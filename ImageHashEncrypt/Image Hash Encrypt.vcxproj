@@ -131,6 +131,7 @@
     <ClCompile Include="Decrypter.cpp" />
     <ClCompile Include="Encrypter.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Decrypter.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="picosha2.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
+    <ClInclude Include="UserInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
