@@ -172,7 +172,8 @@ void UserInterface::printMainMenu()
 {
 	std::cout << BRIGHT_WHITE << "What would you like to do?\n";
 	std::cout << "1. " << BRIGHT_MAGENTA << "Encrypt an image.\n";
-	std::cout << BRIGHT_WHITE << "2. " << CYAN << "Decrypt an image.\n\n";
+	std::cout << BRIGHT_WHITE << "2. " << CYAN << "Decrypt an image.\n";
+	std::cout << BRIGHT_WHITE << "3. " << BRIGHT_BLACK << "Exit.\n\n";
 }
 
 /*
@@ -193,6 +194,7 @@ int UserInterface::intInput(const int minVal, const int maxVal)
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard bad input
 		}
 		
+		std::cout << WHITE;
 		std::cin >> userInput;
 
 		// In case of bad input, notify the user

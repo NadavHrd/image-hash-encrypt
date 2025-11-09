@@ -68,6 +68,14 @@ public:
 	*/
 	static int intInput(const int minVal, const int maxVal);
 
+	/*
+	This function clears the terminal of the user.
+	Input: none.
+	Output: none.
+	Runtime complexity: O(1).
+	*/
+	static void clearScreen();
+
 private:
 	/*
 	This function waits until the user presses enter to continue.
@@ -76,12 +84,4 @@ private:
 	Runtime complexity: O(1).
 	*/
 	static void waitForContinue();
-
-	/*
-	This function clears the terminal of the user.
-	Input: none.
-	Output: none.
-	Runtime complexity: O(1).
-	*/
-	static void clearScreen();
 };
