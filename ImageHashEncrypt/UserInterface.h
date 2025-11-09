@@ -42,7 +42,7 @@ public:
 	Output: none.
 	Runtime complexity: O(n).
 	*/
-	void userEncrypt();
+	static void userEncrypt();
 
 	/*
 	This function lets the user decrypt an image. The function will then print the decryption result to the user.
@@ -50,7 +50,23 @@ public:
 	Output: none.
 	Runtime complexity: O(n).
 	*/
-	void userDecrypt();
+	static void userDecrypt();
+
+	/*
+	This function prints the main menu to the user.
+	Input: none.
+	Output: none.
+	Runtime complexity: O(1).
+	*/
+	static void printMainMenu();
+
+	/*
+	This function gets an int input from the user and makes sure it's within the given valid range.
+	Input: const int minVal, const int maxVal - the valid range for an input.
+	Output: int - the user's input.
+	Runtime complexity: O(n).
+	*/
+	static int intInput(const int minVal, const int maxVal);
 
 private:
 	/*
@@ -59,7 +75,7 @@ private:
 	Output: none.
 	Runtime complexity: O(1).
 	*/
-	void waitForContinue();
+	static void waitForContinue();
 
 	/*
 	This function clears the terminal of the user.
@@ -67,5 +83,5 @@ private:
 	Output: none.
 	Runtime complexity: O(1).
 	*/
-	void clearScreen();
+	static void clearScreen();
 };

@@ -8,7 +8,7 @@ Runtime complexity: O(1).
 */
 void UserInterface::waitForContinue()
 {
-	std::cout << "\nPress Enter to continue...";
+	std::cout << WHITE << "\nPress Enter to continue...";
 
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
 
@@ -160,4 +160,48 @@ void UserInterface::userDecrypt()
 	}
 
 	UserInterface::waitForContinue();
+}
+
+/*
+This function prints the main menu to the user.
+Input: none.
+Output: none.
+Runtime complexity: O(1).
+*/
+void UserInterface::printMainMenu()
+{
+	std::cout << BRIGHT_WHITE << "What would you like to do?\n";
+	std::cout << "1. " << BRIGHT_MAGENTA << "Encrypt an image.\n";
+	std::cout << BRIGHT_WHITE << "2. " << CYAN << "Decrypt an image.\n\n";
+}
+
+/*
+This function gets an int input from the user and makes sure it's within the given valid range.
+Input: const int minVal, const int maxVal - the valid range for an input.
+Output: int - the user's input.
+Runtime complexity: O(n).
+*/
+int UserInterface::intInput(const int minVal, const int maxVal)
+{
+	int userInput = minVal;
+	
+	do
+	{
+		if (std::cin.fail())
+		{
+			std::cin.clear(); // Clear the error flag
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard bad input
+		}
+		
+		std::cin >> userInput;
+
+		// In case of bad input, notify the user
+		if ((std::cin.fail()) || (userInput > maxVal) || (userInput < minVal))
+		{
+			std::cout << WHITE << "\nThe input must be an integer between " << minVal << " and " << maxVal << ".\n";
+		}
+
+	} while ((std::cin.fail()) || (userInput > maxVal) || (userInput < minVal)); // Go over the input loop until we get a valid input
+
+	return userInput;
 }
